@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image and Text Processing</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <script src="static/script.js"></script>
+</head>
+<body>
+    <h1>Image and Text Processing</h1>
+    <form id="input-form" action="/process" method="post" enctype="multipart/form-data">
+        <label for="text-input">Enter Text:</label>
+        <input type="text" id="text-input" name="text_input" required><br><br>
+        <label for="image-file">Upload Image:</label>
+        <input type="file" id="image-file" name="image_file" accept="image/*" required><br><br>
+        <input type="submit" value="Process">
+    </form>
+    <div id="result"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#input-form').submit(function(event) {
+                event.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = new FormData(form[0]);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        var resultDiv = $('#result');
+                        resultDiv.empty();
+
+                        var sentimentScore = response.sentiment_score;
+                        var faceDetected = response.face_detected;
+                        var expressions = response.expressions;
+
+                        resultDiv.append('<p>Sentiment Score: ' + JSON.stringify(sentimentScore) + '</p>');
+                        resultDiv.append('<p>Face Detected: ' + faceDetected + '</p>');
+                        resultDiv.append('<p>Expressions: ' + JSON.stringify(expressions) + '</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
